@@ -16,12 +16,12 @@ class TeamMemberForm
         return $schema
             ->components([
                 Section::make('Frente de la tarjeta')
-                    ->description('Lo que se muestra al inicio: foto, nombre y cargo.')
+                    ->description('Lo que se muestra al inicio. La foto es opcional.')
                     ->icon('heroicon-o-identification')
                     ->columns(2)
                     ->schema([
                         FileUpload::make('photo')
-                            ->label('Foto')
+                            ->label('Foto (opcional)')
                             ->image()
                             ->disk('public')
                             ->directory('team')
@@ -31,25 +31,33 @@ class TeamMemberForm
                             ->label('Nombre')
                             ->required()
                             ->maxLength(255),
+                        TextInput::make('zone')
+                            ->label('Zona')
+                            ->placeholder('Ej. Chiclayo, Norte, Sur...')
+                            ->maxLength(255),
                         TextInput::make('role')
                             ->label('Cargo / Puesto'),
                     ]),
 
                 Section::make('Reverso de la tarjeta')
-                    ->description('Lo que aparece al voltear la tarjeta: descripción y datos de contacto. Se conservan los mismos colores.')
+                    ->description('Se muestra al pasar el mouse (o tocar). El número de WhatsApp será un enlace para escribirle al empleado.')
                     ->icon('heroicon-o-arrow-path')
                     ->columns(2)
                     ->schema([
+                        TextInput::make('whatsapp')
+                            ->label('N° de WhatsApp')
+                            ->placeholder('Ej. 979 699 808 o 51979699808')
+                            ->helperText('Al pulsarlo en la web se abrirá un chat de WhatsApp con esta persona.'),
+                        TextInput::make('phone')
+                            ->label('Teléfono (opcional)')
+                            ->tel(),
+                        TextInput::make('email')
+                            ->label('Correo (opcional)')
+                            ->email(),
                         Textarea::make('description')
                             ->label('Descripción')
                             ->rows(3)
                             ->columnSpanFull(),
-                        TextInput::make('phone')
-                            ->label('Teléfono')
-                            ->tel(),
-                        TextInput::make('email')
-                            ->label('Correo')
-                            ->email(),
                     ]),
 
                 Section::make('Visibilidad')

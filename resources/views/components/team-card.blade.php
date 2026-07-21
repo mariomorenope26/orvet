@@ -1,5 +1,14 @@
 @props(['member'])
 
+@php
+    $waDigits = preg_replace('/\D/', '', (string) $member->whatsapp);
+    // Si el número no tiene código de país, se antepone 51 (Perú).
+    if ($waDigits && strlen($waDigits) === 9) {
+        $waDigits = '51'.$waDigits;
+    }
+    $waText = rawurlencode('Hola '.$member->name.', me comunico desde la web de Orvet.');
+@endphp
+
 <div tabindex="0" class="group h-72 [perspective:1200px] focus:outline-none">
     <div class="relative h-full w-full rounded-2xl shadow-md transition-transform duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] group-focus:[transform:rotateY(180deg)]">
 
@@ -8,33 +17,37 @@
             @if($member->photo)
                 <img src="{{ media_url($member->photo) }}" alt="{{ $member->name }}" class="h-full w-full object-cover">
             @else
-                <div class="flex h-full w-full items-center justify-center bg-primary/10 text-primary">
-                    <svg class="h-20 w-20" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary to-primary-dark text-white">
+                    <span class="text-5xl font-extrabold tracking-wide">{{ Str::of($member->name)->explode(' ')->take(2)->map(fn($w) => Str::substr($w, 0, 1))->implode('') }}</span>
                 </div>
             @endif
             <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
                 <h3 class="text-lg font-bold leading-tight">{{ $member->name }}</h3>
-                @if($member->role)<p class="text-sm text-accent">{{ $member->role }}</p>@endif
+                @if($member->zone)<p class="text-sm text-accent">{{ $member->zone }}</p>@endif
+                @if($member->role)<p class="text-xs text-white/80">{{ $member->role }}</p>@endif
             </div>
         </div>
 
         {{-- Reverso --}}
         <div class="absolute inset-0 flex flex-col justify-center rounded-2xl bg-primary p-6 text-center text-white [backface-visibility:hidden] [transform:rotateY(180deg)]">
             <h3 class="text-lg font-bold">{{ $member->name }}</h3>
-            @if($member->role)<p class="mb-3 text-sm font-medium text-white/80">{{ $member->role }}</p>@endif
-            @if($member->description)<p class="text-sm leading-relaxed text-white/90">{{ $member->description }}</p>@endif
-            <div class="mt-4 space-y-1 text-sm">
+            @if($member->role)<p class="text-sm font-medium text-white/80">{{ $member->role }}</p>@endif
+            @if($member->zone)<p class="mb-2 text-sm text-accent">📍 {{ $member->zone }}</p>@endif
+            @if($member->description)<p class="mb-3 text-sm leading-relaxed text-white/90">{{ $member->description }}</p>@endif
+
+            <div class="mt-2 space-y-2 text-sm">
+                @if($waDigits)
+                    <a href="https://wa.me/{{ $waDigits }}?text={{ $waText }}" target="_blank" rel="noopener"
+                       class="mx-auto flex w-fit items-center gap-2 rounded-full bg-[#25D366] px-4 py-1.5 font-semibold text-white shadow transition hover:brightness-95">
+                        <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347"/></svg>
+                        {{ $member->whatsapp }}
+                    </a>
+                @endif
                 @if($member->phone)
-                    <p class="flex items-center justify-center gap-1.5">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
-                        {{ $member->phone }}
-                    </p>
+                    <p class="text-white/90">Tel: {{ $member->phone }}</p>
                 @endif
                 @if($member->email)
-                    <p class="flex items-center justify-center gap-1.5 break-all">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
-                        {{ $member->email }}
-                    </p>
+                    <a href="mailto:{{ $member->email }}" class="block break-all text-white/90 underline hover:text-white">{{ $member->email }}</a>
                 @endif
             </div>
         </div>

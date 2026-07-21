@@ -1,0 +1,11 @@
+# Reenvía todas las peticiones a la carpeta /public cuando el DocumentRoot
+# del servidor apunta a la raíz del proyecto (caso típico en algunos hostings
+# y en el vhost autogenerado de Laragon). Si el DocumentRoot ya es /public,
+# este archivo queda fuera de la raíz y se ignora.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # No volver a reenviar lo que ya está bajo /public
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

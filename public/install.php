@@ -199,10 +199,14 @@ if ($step === 'run' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     file_put_contents(envPath(), $env);
     echo '<p>✓ Archivo <code>.env</code> configurado (modo producción).</p>';
 
-    // 2) Bootstrap Laravel
+    // 2) Bootstrap Laravel.
+    //    Se elimina cualquier caché de configuración obsoleta y se INICIALIZA
+    //    el framework (registra las facades: DB, Artisan, etc.) antes de usarlas.
+    @unlink($root.'/bootstrap/cache/config.php');
     require $root.'/vendor/autoload.php';
     $app = require $root.'/bootstrap/app.php';
     $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+    $kernel->bootstrap();
 
     // 3) App key
     if (! preg_match('/^APP_KEY=base64:/m', $env)) {

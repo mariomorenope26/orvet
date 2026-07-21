@@ -13,6 +13,11 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
+    # Instalador de producción: /install e /instalar sirven install.php
+    # a nivel Apache (funciona aunque la aplicación aún no esté configurada).
+    RewriteRule ^install/?$ install.php [L]
+    RewriteRule ^instalar/?$ install.php [L]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$

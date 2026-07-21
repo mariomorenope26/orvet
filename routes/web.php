@@ -13,9 +13,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
-// Atajos hacia el instalador de producción (el archivo real es /install.php)
-Route::redirect('/install', '/install.php');
-Route::redirect('/instalar', '/install.php');
+// Nota: /install e /instalar se resuelven a nivel Apache (public/.htaccess)
+// sirviendo install.php, para que funcionen aunque la app no esté configurada.
 
 // Copias de seguridad (solo administradores autenticados)
 Route::middleware('auth')->prefix('admin/backups')->name('admin.backups.')->group(function () {

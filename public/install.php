@@ -34,11 +34,18 @@ function readEnv(): string
 
 function setEnvValue(string $content, string $key, string $value): string
 {
-    $value = preg_match('/\s/', $value) ? '"'.$value.'"' : $value;
-    if (preg_match("/^{$key}=.*$/m", $content)) {
-        return preg_replace("/^{$key}=.*$/m", "{$key}={$value}", $content);
+    // Siempre entre comillas dobles y escapando \ " $  para soportar cualquier
+    // caracter especial (#, $, espacios, etc.) sin corromper el .env.
+    $escaped = str_replace(['\\', '"', '$', "\r", "\n"], ['\\\\', '\\"', '\\$', '', ''], $value);
+    $line = $key.'="'.$escaped.'"';
+    $pattern = '/^'.preg_quote($key, '/').'=.*$/m';
+
+    if (preg_match($pattern, $content)) {
+        // Callback para evitar que $ y \ del valor se interpreten en el reemplazo.
+        return preg_replace_callback($pattern, fn () => $line, $content, 1);
     }
-    return rtrim($content)."\n{$key}={$value}\n";
+
+    return rtrim($content)."\n".$line."\n";
 }
 
 function requirements(): array

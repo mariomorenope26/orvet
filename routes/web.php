@@ -13,6 +13,10 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
+// Atajos hacia el instalador de producción (el archivo real es /install.php)
+Route::redirect('/install', '/install.php');
+Route::redirect('/instalar', '/install.php');
+
 // Copias de seguridad (solo administradores autenticados)
 Route::middleware('auth')->prefix('admin/backups')->name('admin.backups.')->group(function () {
     Route::get('download/{file}', [\App\Http\Controllers\BackupController::class, 'download'])

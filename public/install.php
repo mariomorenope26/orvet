@@ -193,6 +193,8 @@ if ($step === 'run' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $env = setEnvValue($env, 'APP_ENV', 'production');
     $env = setEnvValue($env, 'APP_DEBUG', 'false');
     $env = setEnvValue($env, 'APP_URL', $appUrl);
+    $env = setEnvValue($env, 'APP_LOCALE', 'es');
+    $env = setEnvValue($env, 'APP_FALLBACK_LOCALE', 'es');
     $env = setEnvValue($env, 'LOG_LEVEL', 'error');
     $env = setEnvValue($env, 'DB_CONNECTION', 'mysql');
     $env = setEnvValue($env, 'DB_HOST', $_POST['db_host'] ?? '127.0.0.1');

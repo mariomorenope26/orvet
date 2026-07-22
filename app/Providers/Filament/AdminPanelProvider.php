@@ -31,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->profile()
+            ->brandName('Orvet')
             ->colors([
                 'primary' => Color::Amber,
             ])
